@@ -163,7 +163,8 @@ class Trainer(object):
         return actor_loss, value_loss, target_info
 
     def representation_loss(self, obs, actions, rewards, nonterms):
-
+        
+        # TODO: Add FC bfore obsDecoder, convert post_modelstate from (bs, 400) -> (bs, 200)
         embed = self.ObsEncoder(obs)                                         #t to t+seq_len   
         prev_rssm_state = self.RSSM._init_rssm_state(self.batch_size)   
         prior, posterior = self.RSSM.rollout_observation(self.seq_len, embed, actions, nonterms, prev_rssm_state)
@@ -172,6 +173,8 @@ class Trainer(object):
         reward_dist = self.RewardDecoder(post_modelstate[:-1])               #t to t+seq_len-1  
         pcont_dist = self.DiscountModel(post_modelstate[:-1])                #t to t+seq_len-1   
         
+        # TODO: obs_loss between (bs, N, D) space
+
         obs_loss = self._obs_loss(obs_dist, obs[:-1])
         reward_loss = self._reward_loss(reward_dist, rewards[1:])
         pcont_loss = self._pcont_loss(pcont_dist, nonterms[1:])

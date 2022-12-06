@@ -3,8 +3,13 @@ import torch
 import torch.distributions as td
 import torch.nn as nn
 
+# Replace to our slot-encoder
+# TODO: dataloader convert to (c, 64, 64), NN interpolate
+# input (bs, c, 10, 10)
+# output (bs, embedding_size)
+# embedding_size = N x D 
 
-class ObsEncoder(nn.Module):
+class ObsEncoder(nn.Module): 
     def __init__(self, input_shape, embedding_size, info):
         """
         :param input_shape: tuple containing shape of input
