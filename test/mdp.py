@@ -6,8 +6,11 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction
 from dreamerv2.training.config import MinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig
 from dreamerv2.training.trainer import Trainer
+from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
+from dreamerv2.training.slot_evaluator import SlotEvaluator
 
 def main(args):
     wandb.login()
@@ -37,8 +40,10 @@ def main(args):
     seq_len = args.seq_len
 
     if args.slot:
-        from dreamerv2.training.slot_config import SlotMinAtarConfig as MinAtarConfig
-    config = MinAtarConfig(
+        CFG = SlotMinAtarConfig
+    else:
+        CFG = MinAtarConfig
+    config = CFG(
         env=env_name,
         obs_shape=obs_shape,
         action_size=action_size,
@@ -51,11 +56,15 @@ def main(args):
 
     config_dict = config.__dict__
     if args.slot:
-        from dreamerv2.training.slot_trainer import SlotTrainer as Trainer
-    trainer = Trainer(config, device)
+        TRN = SlotTrainer
+    else:
+        TRN = Trainer
+    trainer = TRN(config, device)
     if args.slot:
-        from dreamerv2.training.slot_evaluator import SlotEvaluator as Evaluator
-    evaluator = Evaluator(config, device)
+        EVL = SlotEvaluator
+    else:
+        EVL = Evaluator
+    evaluator = EVL(config, device)
 
     with wandb.init(project='mastering MinAtar with world models', config=config_dict):
         """training loop"""

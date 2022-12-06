@@ -5,7 +5,9 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction, breakoutPOMDP, space_invadersPOMDP, seaquestPOMDP, asterixPOMDP, freewayPOMDP
 from dreamerv2.training.config import MinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig
 from dreamerv2.training.evaluator import Evaluator
+from dreamerv2.training.slot_evaluator import SlotEvaluator
 
 pomdp_wrappers = {
     'breakout':breakoutPOMDP,
@@ -48,8 +50,10 @@ def main(args):
     action_dtype = np.float32
 
     if args.slot:
-        from dreamerv2.training.slot_config import SlotMinAtarConfig as MinAtarConfig
-    config = MinAtarConfig(
+        CFG = SlotMinAtarConfig
+    else:
+        CFG = MinAtarConfig
+    config = CFG(
         env=env_name,
         obs_shape=obs_shape,
         action_size=action_size,
@@ -61,8 +65,10 @@ def main(args):
     )
 
     if args.slot:
-        from dreamerv2.training.slot_evaluator import SlotEvaluator as Evaluator
-    evaluator = Evaluator(config, device)
+        EVL = SlotEvaluator
+    else:
+        EVL = Evaluator
+    evaluator = EVL(config, device)
     best_score = 0
     
     for f in sorted(os.listdir(model_dir)):

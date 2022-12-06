@@ -10,7 +10,7 @@ class SlotAttentionParams(BaseParams):
     resolution = (64, 64)  # SAVi paper uses 128x128
 
     # Slot Attention
-    slot_size = 32
+    slot_size = 128
     num_slots = 9
     slot_dict = dict(
         num_slots=num_slots,
@@ -21,7 +21,7 @@ class SlotAttentionParams(BaseParams):
 
     # CNN Encoder
     enc_dict = dict(
-        enc_channels=(3, 32, 32, 32, 32),
+        enc_channels=(3, 64, 64, 64, 64),
         enc_ks=5,
         enc_out_channels=slot_size,
         enc_norm='',
@@ -29,7 +29,7 @@ class SlotAttentionParams(BaseParams):
 
     # CNN Decoder
     dec_dict = dict(
-        dec_channels=(slot_size, 32, 32, 32, 32),
+        dec_channels=(slot_size, 64, 64, 64, 64),
         dec_resolution=(8, 8),
         dec_ks=5,
         dec_norm='',
