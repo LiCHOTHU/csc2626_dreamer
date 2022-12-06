@@ -46,12 +46,12 @@ class SlotMinAtarConfig():
     params = params.SlotAttentionParams()
 
     #latent space desc
-    assert params.slot_size == 32 and params.num_slots == 9, 'Please update the RSSM params'
+    assert params.slot_size == 128 and params.num_slots == 9, 'Please update the RSSM params'
     rssm_type: str = 'discrete'
-    embedding_size: int = 288
+    embedding_size: int = 128*9
     rssm_node_size: int = embedding_size
     # rssm_info: Dict = field(default_factory=lambda:{'deter_size':embedding_size, 'stoch_size':slot_size, 'class_size':num_slots, 'category_size':slot_size, 'min_std':0.1})
-    rssm_info: Dict = field(default_factory=lambda:{'deter_size':288, 'stoch_size':32, 'class_size':9, 'category_size':32, 'min_std':0.1})
+    rssm_info: Dict = field(default_factory=lambda:{'deter_size':128*9, 'stoch_size':128, 'class_size':9, 'category_size':128, 'min_std':0.1})
     # TODO: modified embedding size to NxD
     
     #objective desc

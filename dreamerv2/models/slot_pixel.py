@@ -32,6 +32,8 @@ class SlotObsEncoder(nn.Module):
         """obs: [T, B, C, H, W]"""
         # to [B, T, C, H, W]
         T, B, _, _, _ = obs.shape
+        obs = 2 * obs - 1
+        obs = torch.clamp(obs, min=-1, max=1)
         obs = obs.flatten(0,1)
         obs = F.interpolate(obs, (64, 64), mode='nearest')
         obs = obs.unflatten(0, (T, B))
