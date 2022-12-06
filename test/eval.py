@@ -47,6 +47,8 @@ def main(args):
     obs_dtype = bool 
     action_dtype = np.float32
 
+    if args.slot:
+        from dreamerv2.training.slot_config import SlotMinAtarConfig as MinAtarConfig
     config = MinAtarConfig(
         env=env_name,
         obs_shape=obs_shape,
@@ -58,6 +60,8 @@ def main(args):
         eval_render=eval_render
     )
 
+    if args.slot:
+        from dreamerv2.training.slot_evaluator import SlotEvaluator as Evaluator
     evaluator = Evaluator(config, device)
     best_score = 0
     
@@ -79,5 +83,6 @@ if __name__ == "__main__":
     parser.add_argument("--eval_render", type=int, help='to render while evaluation')
     parser.add_argument("--pomdp", type=int, help='partial observation flag')
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
+    parser.add_argument('--slot', action='store_true')
     args = parser.parse_args()
     main(args)

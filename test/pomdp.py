@@ -45,6 +45,8 @@ def main(args):
     batch_size = args.batch_size
     seq_len = args.seq_len
 
+    if args.slot:
+        from dreamerv2.training.slot_config import SlotMinAtarConfig as MinAtarConfig
     config = MinAtarConfig(
         env=env_name,
         obs_shape=obs_shape,
@@ -57,7 +59,11 @@ def main(args):
     )
 
     config_dict = config.__dict__
+    if args.slot:
+        from dreamerv2.training.slot_trainer import SlotTrainer as Trainer
     trainer = Trainer(config, device)
+    if args.slot:
+        from dreamerv2.training.slot_evaluator import SlotEvaluator as Evaluator
     evaluator = Evaluator(config, device)
     
     with wandb.init(project='mastering MinAtar with world models', config=config_dict):
@@ -134,5 +140,6 @@ if __name__ == "__main__":
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
     parser.add_argument('--batch_size', type=int, default=50, help='Batch size')
     parser.add_argument('--seq_len', type=int, default=50, help='Sequence Length (chunk length)')
+    parser.add_argument('--slot', action='store_true')
     args = parser.parse_args()
     main(args)
