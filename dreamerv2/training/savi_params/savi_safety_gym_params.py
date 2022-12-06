@@ -5,13 +5,13 @@ class SlotAttentionParams(BaseParams):
     project = 'Imitation-Learning-Project'
 
     # model configs
-    savi_path = './savi/weights/safety_gym.pth'
+    savi_path = './savi/weights/safetygym.pth'
     model = 'SAVi'
     resolution = (64, 64)  # SAVi paper uses 128x128
 
     # Slot Attention
     slot_size = 128
-    num_slots = 10
+    num_slots = 7
     slot_dict = dict(
         num_slots=num_slots,
         slot_size=slot_size,
