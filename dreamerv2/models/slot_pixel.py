@@ -2,6 +2,7 @@ import os
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.distributions as td
 
 from .savi import build_savi
@@ -23,13 +24,18 @@ class SlotObsEncoder(nn.Module):
             p.requires_grad = False
 
         cur_dir = os.path.dirname(os.path.realpath(__file__))
-        w = os.path.join(cur_dir, params['savi_path'])  # './savi/weights/minatar.pth'
+        w = os.path.join(cur_dir, params.savi_path)  # './savi/weights/minatar.pth'
         savi.load_weight(w)
         self.savi = savi
 
     def forward(self, obs):
         """obs: [T, B, C, H, W]"""
         # to [B, T, C, H, W]
+        T, B, _, _, _ = obs.shape
+        obs = obs.flatten(0,1)
+        obs = F.interpolate(obs, (64, 64), mode='nearest')
+        obs = obs.unflatten(0, (T, B))
+
         obs = obs.transpose(0, 1).contiguous()
         embed = self.savi({'img': obs})['slots']  # [B, T, N, D]
         # back to [T, B, N, D]

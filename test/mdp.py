@@ -79,7 +79,8 @@ def main(args):
             if iter%trainer.config.save_every == 0:
                 trainer.save_model(iter)
             with torch.no_grad():
-                embed = trainer.ObsEncoder(torch.tensor(obs, dtype=torch.float32).unsqueeze(0).to(trainer.device))  
+                embed = trainer.ObsEncoder(torch.tensor(obs, dtype=torch.float32)[None, None].to(trainer.device))
+                embed = embed.squeeze(0) 
                 _, posterior_rssm_state = trainer.RSSM.rssm_observe(embed, prev_action, not done, prev_rssmstate)
                 model_state = trainer.RSSM.get_model_state(posterior_rssm_state)
                 action, action_dist = trainer.ActionModel(model_state)
