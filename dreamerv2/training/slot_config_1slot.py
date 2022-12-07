@@ -10,7 +10,7 @@ from typing import Any, Tuple, Dict
 # Following HPs are not a result of detailed tuning.   
 
 @dataclass
-class SlotMinAtarConfig():
+class SlotMinAtarConfig_1slot():
     '''default HPs that are known to work for MinAtar envs '''
     #env desc
     env : str                                           
@@ -34,19 +34,19 @@ class SlotMinAtarConfig():
     eval_render: bool = True
     save_every: int = int(1e5)
     seed_steps: int = 4000
-    model_dir: int = 'results'
-    gif_dir: int = 'results'
+    model_dir: int = 'results-1slot'
+    gif_dir: int = 'results-1slot'
     
     # SAVi config file
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    params = './savi_params/savi_minatar_params'
+    params = './savi_params/savi_minatar_params-1slot'
     params = os.path.join(cur_dir, params)
     sys.path.append(os.path.dirname(params))
     params = importlib.import_module(os.path.basename(params))
     params = params.SlotAttentionParams()
 
     #latent space desc
-    assert params.slot_size == 128 and params.num_slots == 9, 'Please update the RSSM params'
+    assert params.slot_size == 128*9 and params.num_slots == 1, 'Please update the RSSM params'
     rssm_type: str = 'discrete'
     embedding_size: int = 128*9
     rssm_node_size: int = embedding_size
@@ -82,7 +82,7 @@ class SlotMinAtarConfig():
 
 
 @dataclass
-class SlotSafetyConfig():
+class SlotSafetyConfig_1slot():
     '''default HPs that are known to work for MinAtar envs '''
     # env desc
     env: str
@@ -106,19 +106,19 @@ class SlotSafetyConfig():
     eval_render: bool = True
     save_every: int = int(1e5)
     seed_steps: int = 4000
-    model_dir: int = 'results'
-    gif_dir: int = 'results'
+    model_dir: int = 'results-1slot'
+    gif_dir: int = 'results-1slot'
 
     # SAVi config file
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    params = './savi_params/savi_safety_gym_params'
+    params = './savi_params/savi_safety_gym_params-1slot'
     params = os.path.join(cur_dir, params)
     sys.path.append(os.path.dirname(params))
     params = importlib.import_module(os.path.basename(params))
     params = params.SlotAttentionParams()
 
     # latent space desc
-    assert params.slot_size == 128 and params.num_slots == 7, 'Please update the RSSM params'
+    assert params.slot_size == 128*7 and params.num_slots == 1, 'Please update the RSSM params'
     rssm_type: str = 'discrete'
     embedding_size: int = 128 * 7
     rssm_node_size: int = embedding_size

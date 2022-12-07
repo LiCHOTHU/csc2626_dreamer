@@ -5,7 +5,8 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction, breakoutPOMDP, space_invadersPOMDP, seaquestPOMDP, asterixPOMDP, freewayPOMDP
 from dreamerv2.training.config import MinAtarConfig
-from dreamerv2.training.slot_config import SlotMinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
+from dreamerv2.training.slot_config_1slot import SlotMinAtarConfig_1slot, SlotSafetyConfig_1slot
 from dreamerv2.training.evaluator import Evaluator
 from dreamerv2.training.slot_evaluator import SlotEvaluator
 
@@ -50,7 +51,15 @@ def main(args):
     action_dtype = np.float32
 
     if args.slot:
-        CFG = SlotMinAtarConfig
+        if env_name == "safety":
+            CFG = SlotSafetyConfig
+        else:
+            CFG = SlotMinAtarConfig
+    if args.slot_1slot:
+        if env_name == "safety":
+            CFG = SlotSafetyConfig_1slot
+        else:
+            CFG = SlotMinAtarConfig_1slot
     else:
         CFG = MinAtarConfig
     config = CFG(
@@ -92,5 +101,8 @@ if __name__ == "__main__":
     parser.add_argument("--pomdp", type=int, help='partial observation flag')
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
     parser.add_argument('--slot', action='store_true')
+    parser.add_argument('--slot_1slot', action='store_true')
     args = parser.parse_args()
+    if args.slot_1slot:
+        assert not args.slot, 'can only specify 1 args'
     main(args)
