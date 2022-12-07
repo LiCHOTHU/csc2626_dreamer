@@ -71,7 +71,9 @@ def main(args):
     evaluator = EVL(config, device)
     best_score = 0
     
-    for f in sorted(os.listdir(model_dir)):
+    # for f in sorted(os.listdir(model_dir)):
+    for f in ['models_best.pth']:
+        print('evaluating model : ', f)
         eval_score = evaluator.eval_saved_agent(env,  os.path.join(model_dir, f))
         if eval_score > best_score:
             print('..saving model number')
