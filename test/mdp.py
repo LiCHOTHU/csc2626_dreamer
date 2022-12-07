@@ -6,11 +6,12 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction
 from dreamerv2.training.config import MinAtarConfig
-from dreamerv2.training.slot_config import SlotMinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
 from dreamerv2.training.trainer import Trainer
 from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
 from dreamerv2.training.slot_evaluator import SlotEvaluator
+from dreamerv2.envs.navigation.engine import Engine
 
 def main(args):
     wandb.login()
@@ -29,9 +30,33 @@ def main(args):
         torch.cuda.manual_seed(args.seed)
     else:
         device = torch.device('cpu')
-    print('using :', device)  
-    
-    env = OneHotAction(GymMinAtar(env_name))
+    print('using :', device)
+
+    if env_name == "safety":
+        config = {
+            'robot_base': 'xmls/point2.xml',
+            # 'robot_base': 'xmls/point.xml',
+            'task': 'goal',
+            'observe_goal_lidar': True,
+            'observe_box_lidar': True,
+            'observe_hazards': True,
+            'observe_vases': True,
+            'constrain_hazards': True,
+            'lidar_max_dist': 3,
+            'lidar_num_bins': 16,
+            'hazards_num': 2,
+            'vases_num': 2,
+            'observation_flatten': False,
+            'render_lidar_markers': False,
+            'vases_size': 0.2,  # Half-size (radius) of vase object
+            'robot_rot': 0,  # Override robot starting angle
+        }
+
+        env = Engine(config)
+        env.reset()
+
+    else:
+        env = OneHotAction(GymMinAtar(env_name))
     obs_shape = env.observation_space.shape
     action_size = env.action_space.shape[0]
     obs_dtype = bool
@@ -40,7 +65,10 @@ def main(args):
     seq_len = args.seq_len
 
     if args.slot:
-        CFG = SlotMinAtarConfig
+        if env_name == "safety":
+            CFG = SlotSafetyConfig
+        else:
+            CFG = SlotMinAtarConfig
     else:
         CFG = MinAtarConfig
     config = CFG(
