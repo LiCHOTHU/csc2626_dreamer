@@ -1,3 +1,8 @@
+## Combined with Slot object-centric model
+
+- Install [nerv](https://github.com/Wuziyi616/nerv).
+- Add a flag `--slot` to the training command.
+
 ## Dreamer- v2 Pytorch
 
 Pytorch implementation of [Mastering Atari with Discrete World Models](https://arxiv.org/abs/2010.02193)<br>

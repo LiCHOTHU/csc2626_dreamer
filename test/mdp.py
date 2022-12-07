@@ -6,8 +6,11 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction
 from dreamerv2.training.config import MinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig
 from dreamerv2.training.trainer import Trainer
+from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
+from dreamerv2.training.slot_evaluator import SlotEvaluator
 
 def main(args):
     wandb.login()
@@ -36,7 +39,11 @@ def main(args):
     batch_size = args.batch_size
     seq_len = args.seq_len
 
-    config = MinAtarConfig(
+    if args.slot:
+        CFG = SlotMinAtarConfig
+    else:
+        CFG = MinAtarConfig
+    config = CFG(
         env=env_name,
         obs_shape=obs_shape,
         action_size=action_size,
@@ -48,8 +55,16 @@ def main(args):
     )
 
     config_dict = config.__dict__
-    trainer = Trainer(config, device)
-    evaluator = Evaluator(config, device)
+    if args.slot:
+        TRN = SlotTrainer
+    else:
+        TRN = Trainer
+    trainer = TRN(config, device)
+    if args.slot:
+        EVL = SlotEvaluator
+    else:
+        EVL = Evaluator
+    evaluator = EVL(config, device)
 
     with wandb.init(project='mastering MinAtar with world models', config=config_dict):
         """training loop"""
@@ -73,7 +88,8 @@ def main(args):
             if iter%trainer.config.save_every == 0:
                 trainer.save_model(iter)
             with torch.no_grad():
-                embed = trainer.ObsEncoder(torch.tensor(obs, dtype=torch.float32).unsqueeze(0).to(trainer.device))  
+                embed = trainer.ObsEncoder(torch.tensor(obs, dtype=torch.float32)[None, None].to(trainer.device))
+                embed = embed.squeeze(0) 
                 _, posterior_rssm_state = trainer.RSSM.rssm_observe(embed, prev_action, not done, prev_rssmstate)
                 model_state = trainer.RSSM.get_model_state(posterior_rssm_state)
                 action, action_dist = trainer.ActionModel(model_state)
@@ -123,5 +139,6 @@ if __name__ == "__main__":
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
     parser.add_argument('--batch_size', type=int, default=50, help='Batch size')
     parser.add_argument('--seq_len', type=int, default=50, help='Sequence Length (chunk length)')
+    parser.add_argument('--slot', action='store_true')
     args = parser.parse_args()
     main(args)

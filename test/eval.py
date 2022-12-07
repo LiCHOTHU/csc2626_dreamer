@@ -5,7 +5,9 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction, breakoutPOMDP, space_invadersPOMDP, seaquestPOMDP, asterixPOMDP, freewayPOMDP
 from dreamerv2.training.config import MinAtarConfig
+from dreamerv2.training.slot_config import SlotMinAtarConfig
 from dreamerv2.training.evaluator import Evaluator
+from dreamerv2.training.slot_evaluator import SlotEvaluator
 
 pomdp_wrappers = {
     'breakout':breakoutPOMDP,
@@ -47,7 +49,11 @@ def main(args):
     obs_dtype = bool 
     action_dtype = np.float32
 
-    config = MinAtarConfig(
+    if args.slot:
+        CFG = SlotMinAtarConfig
+    else:
+        CFG = MinAtarConfig
+    config = CFG(
         env=env_name,
         obs_shape=obs_shape,
         action_size=action_size,
@@ -58,7 +64,11 @@ def main(args):
         eval_render=eval_render
     )
 
-    evaluator = Evaluator(config, device)
+    if args.slot:
+        EVL = SlotEvaluator
+    else:
+        EVL = Evaluator
+    evaluator = EVL(config, device)
     best_score = 0
     
     # for f in sorted(os.listdir(model_dir)):
@@ -81,5 +91,6 @@ if __name__ == "__main__":
     parser.add_argument("--eval_render", type=int, help='to render while evaluation')
     parser.add_argument("--pomdp", type=int, help='partial observation flag')
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
+    parser.add_argument('--slot', action='store_true')
     args = parser.parse_args()
     main(args)

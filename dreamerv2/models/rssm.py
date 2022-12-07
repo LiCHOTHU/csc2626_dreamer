@@ -96,6 +96,7 @@ class RSSM(nn.Module, RSSMUtils):
     def rssm_observe(self, obs_embed, prev_action, prev_nonterm, prev_rssm_state):
         prior_rssm_state = self.rssm_imagine(prev_action, prev_rssm_state, prev_nonterm)
         deter_state = prior_rssm_state.deter
+
         x = torch.cat([deter_state, obs_embed], dim=-1)
         if self.rssm_type == 'discrete':
             posterior_logit = self.fc_posterior(x)
