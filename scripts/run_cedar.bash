@@ -6,7 +6,7 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.out
 #SBATCH --gpus-per-node=v100l:1
-#SBATCH --mem=16G
+#SBATCH --mem=32G
 #SBATCH --cpus-per-task=8
 
 echo `date`: "Job $SLURM_JOB_ID is allocated resource"

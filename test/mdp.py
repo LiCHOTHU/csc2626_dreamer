@@ -72,7 +72,7 @@ def main(args):
             CFG = SlotSafetyConfig
         else:
             CFG = SlotMinAtarConfig
-    if args.slot_1slot:
+    elif args.slot_1slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig_1slot
         else:
