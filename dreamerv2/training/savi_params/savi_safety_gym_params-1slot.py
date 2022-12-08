@@ -1,4 +1,4 @@
-from nerv.training import BaseParams
+from nerv.training.params import BaseParams
 
 
 class SlotAttentionParams(BaseParams):
