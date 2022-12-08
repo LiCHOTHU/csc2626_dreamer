@@ -89,13 +89,13 @@ def main(args):
     )
 
     config_dict = config.__dict__
-    if args.slot:
+    if args.slot or args.slot_1slot:
         TRN = SlotTrainer
     else:
         TRN = Trainer
 
     trainer = TRN(config, device)
-    if args.slot:
+    if args.slot or args.slot_1slot:
         EVL = SlotEvaluator
     else:
         EVL = Evaluator
