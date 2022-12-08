@@ -65,8 +65,8 @@ def main(args):
     seq_len = args.seq_len
 
     if args.slot:
+        from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
         if env_name == "safety":
-            from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
             CFG = SlotSafetyConfig
         else:
             CFG = SlotMinAtarConfig
@@ -126,7 +126,7 @@ def main(args):
                 trainer.update_target()       
                 
             if args.exp_suffix == 'debug':
-                trainer.config.save_every = 1000
+                trainer.config.save_every = 100
                 
             if iter%trainer.config.save_every == 0:
                 save_path = os.path.join(model_dir, 'models_%d.pth' % iter)
