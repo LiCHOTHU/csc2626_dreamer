@@ -18,7 +18,7 @@ def main(args):
     if args.exp_suffix is not None:
         exp_name += "_{}".format(args.exp_suffix)
     
-    result_dir = os.path.join('results', exp_name)
+    result_dir = os.path.join(args.result_root, exp_name)
     model_dir = os.path.join(result_dir, 'r{}_models'.format(args.id))  #dir to save learnt models
     os.makedirs(model_dir, exist_ok=True)
 
@@ -119,7 +119,10 @@ def main(args):
                 train_metrics = trainer.train_batch(train_metrics)
             if iter%trainer.config.slow_target_update == 0:
                 trainer.update_target()       
-            trainer.config.save_every = 1000
+                
+            if args.exp_suffix == 'debug':
+                trainer.config.save_every = 1000
+                
             if iter%trainer.config.save_every == 0:
                 save_path = os.path.join(model_dir, 'models_%d.pth' % iter)
                 trainer.save_model(iter)
@@ -180,6 +183,9 @@ if __name__ == "__main__":
     parser.add_argument("--exp_suffix", type=str, default=None, help='experiment name, appended to env name')
     parser.add_argument('--seed', type=int, default=1, help='Random seed')
     parser.add_argument("--id", type=str, default=None, help='Experiment ID')
+
+    # For saving chcckpoints
+    parser.add_argument('--result_root', type=str, default='models', help='Directory to save models')
     
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
     parser.add_argument('--batch_size', type=int, default=50, help='Batch size')
