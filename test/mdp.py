@@ -93,12 +93,12 @@ def main(args):
 
     config_dict = config.__dict__
 
-    if args.slot:
+    if args.slot or args.slot_1slot:
         from dreamerv2.training.slot_trainer import SlotTrainer
         TRN = SlotTrainer
     else:
         TRN = Trainer
-    if args.slot:
+    if args.slot or args.slot_1slot:
         from dreamerv2.training.slot_evaluator import SlotEvaluator
         EVL = SlotEvaluator
     else:
