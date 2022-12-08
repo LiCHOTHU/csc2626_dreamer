@@ -70,7 +70,7 @@ def main(args):
             CFG = SlotSafetyConfig
         else:
             CFG = SlotMinAtarConfig
-    if args.slot_1slot:
+    elif args.slot_1slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig_1slot
         else:
@@ -93,11 +93,13 @@ def main(args):
         TRN = SlotTrainer
     else:
         TRN = Trainer
+
     trainer = TRN(config, device)
     if args.slot:
         EVL = SlotEvaluator
     else:
         EVL = Evaluator
+
     evaluator = EVL(config, device)
 
     with wandb.init(project='mastering MinAtar with world models', config=config_dict):
