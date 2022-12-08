@@ -100,7 +100,12 @@ def main(args):
     trainer = TRN(config, device)
     evaluator = EVL(config, device)
 
-    with wandb.init(project='mastering MinAtar with world models', config=config_dict, name=exp_name):
+    with wandb.init(
+            project = 'mastering MinAtar with world models', 
+            config = config_dict, 
+            name = exp_name, 
+            dir = result_dir+"/wandb"
+        ):
         """training loop"""
         print('...training...')
         train_metrics = {}
