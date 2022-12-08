@@ -59,8 +59,8 @@ class SlotEvaluator(object):
             prev_action = torch.zeros(1, self.action_size).to(self.device)
             while not done:
                 with torch.no_grad():
-                    embed = self.ObsEncoder(torch.tensor(obs, dtype=torch.float32)[None, None].to(self.device))  # modify
-                    embed = embed.squeeze(0)  # add
+                    embed = self.ObsEncoder(torch.tensor(obs, dtype=torch.float32)[None, None].to(self.device))    
+                    embed = embed.squeeze(0) 
                     _, posterior_rssm_state = self.RSSM.rssm_observe(embed, prev_action, not done, prev_rssmstate)
                     model_state = self.RSSM.get_model_state(posterior_rssm_state)
                     action, _ = self.ActionModel(model_state)
