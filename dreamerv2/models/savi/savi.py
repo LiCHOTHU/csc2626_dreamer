@@ -10,6 +10,50 @@ from .utils import assert_shape, SoftPositionEmbed, torch_cat
 from .predictor import ResidualMLPPredictor, TransformerPredictor, \
     RNNPredictorWrapper
 
+def get_conv(
+    in_channels,
+    out_channels,
+    kernel_size,
+    stride=1,
+    dilation=1,
+    groups=1,
+    bias=True,
+    dim='2d',
+):
+    """Get Conv layer."""
+    return eval(f'nn.Conv{dim}')(
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride=stride,
+        padding=kernel_size // 2,
+        dilation=dilation,
+        groups=groups,
+        bias=bias)
+
+def get_deconv(
+    in_channels,
+    out_channels,
+    kernel_size,
+    stride=1,
+    dilation=1,
+    groups=1,
+    bias=True,
+    dim='2d',
+):
+    """Get Conv layer."""
+    return eval(f'nn.ConvTranspose{dim}')(
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride=stride,
+        padding=kernel_size // 2,
+        output_padding=stride - 1,
+        dilation=dilation,
+        groups=groups,
+        bias=bias)
+
+
 def deconv_out_shape(
     in_size,
     stride,

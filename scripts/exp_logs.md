@@ -19,15 +19,14 @@ python mdp.py --env freeway_rgb --device cuda --slot --exp_suffix debug
 export SBATCH_TIMELIMIT=1-12:00:00
 for SEED in 1 2 3 4 5
 do
-    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env freeway_rgb --device cuda --slot --exp_suffix crash0.01 --seed $SEED
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env freeway_rgb --device cuda --slot --exp_suffix slot_crash0.01 --seed $SEED
 done
 
 # With 1 slot
-
 export SBATCH_TIMELIMIT=1-12:00:00
 for SEED in 1 2 3 4 5
 do
-    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env freeway_rgb --device cuda --slot_1slot --exp_suffix crash0.01 --seed $SEED
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env freeway_rgb --device cuda --slot_1slot --exp_suffix slot1_crash0.01 --seed $SEED
 done
 
 
