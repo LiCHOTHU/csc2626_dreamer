@@ -1,4 +1,20 @@
-# Running Baselines and SlotAtten on MinAtar
+# Running Baselines on Freeway
+```
+export SBATCH_TIMELIMIT=1-00:00:00
+for SEED in 1 2 3 4 5
+do
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env asterix --device cuda --exp_suffix baseline --seed $SEED
+done
+
+export SBATCH_TIMELIMIT=1-00:00:00
+for SEED in 1 2 3 4 5
+do
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env asterix_rgb --device cuda --exp_suffix baseline --seed $SEED
+done
+```
+
+
+# Running Baselines and SlotAtten on Freeway
 ```
 # Baselines
 python test/mdp.py --env freeway_seg --device cpu --exp_suffix debug
