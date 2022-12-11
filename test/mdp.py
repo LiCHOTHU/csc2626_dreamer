@@ -69,7 +69,6 @@ def main(args):
     seq_len = args.seq_len
 
     if args.slot:
-        from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
         if env_name == "safety":
             CFG = SlotSafetyConfig
         elif 'freeway' in env_name.lower():

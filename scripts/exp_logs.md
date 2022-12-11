@@ -17,6 +17,17 @@ for SEED in 1 2 3 4 5
 do
     sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env asterix_seg --device cuda --exp_suffix baseline --seed $SEED
 done
+
+python test/mdp.py --env asterix_rgb --device cuda --slot --exp_suffix slot_debug
+python test/mdp.py --env asterix_rgb --device cuda --slot_1slot --exp_suffix slot1_small_debug
+
+# With Slot Atten
+export SBATCH_TIMELIMIT=1-12:00:00
+for SEED in 1 2 3 4 5
+do
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env asterix_rgb --device cuda --slot --exp_suffix slot --seed $SEED
+    sbatch /home/guqiao/src/csc2626_dreamer/scripts/run_cedar.bash python test/mdp.py --env asterix_rgb --device cuda --slot_1slot --exp_suffix slot1_small --seed $SEED
+done
 ```
 
 
