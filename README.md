@@ -3,7 +3,6 @@
 - Install [nerv](https://github.com/Wuziyi616/nerv).
 - Add a flag `--slot` to the training command if you want to train DreamerV2 + SAVi.
 - Add a flag `--slot_1slot` if you want to train DreamerV2 + 1slot-SAVi.
-- Download the [weight](https://drive.google.com/drive/folders/1q_KO2mWyNZSUBIUMzxbwkqp8sxXmuKDg?usp=share_link) and put them [here](./dreamerv2/models/savi/weights/) for 1slot-SAVi.
 
 ## Dreamer- v2 Pytorch
 
