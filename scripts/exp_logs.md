@@ -59,6 +59,6 @@ do
 done
 
 
-python test/mdp.py --env freeway_rgb --device cuda --slot_1slot --exp_suffix debug
+python test/mdp.py --env freeway_rgb --device cuda --slot_1slot --exp_suffix slot1_small_crash0.01_debug
 
 ```
