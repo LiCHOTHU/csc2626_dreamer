@@ -12,7 +12,6 @@ from dreamerv2.training.trainer import Trainer
 from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
 from dreamerv2.training.slot_evaluator import SlotEvaluator
-from dreamerv2.envs.navigation.engine import Engine
 
 def main(args):
     wandb.login()
