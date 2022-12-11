@@ -6,8 +6,8 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction
 from dreamerv2.training.config import MinAtarConfig
-from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
-from dreamerv2.training.slot_config_1slot import SlotMinAtarConfig_1slot, SlotSafetyConfig_1slot
+from dreamerv2.training.slot_config import SlotFreewayConfig, SlotAsterixConfig, SlotSafetyConfig
+from dreamerv2.training.slot_config_1slot import SlotFreewayConfig_1slot, SlotAsterixConfig_1slot, SlotSafetyConfig_1slot
 from dreamerv2.training.trainer import Trainer
 from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
@@ -21,7 +21,7 @@ def main(args):
 
     '''make dir for saving results'''
     result_dir = os.path.join('results', '{}_{}'.format(env_name, exp_id))
-    model_dir = os.path.join(result_dir, 'models')                                                  #dir to save learnt models
+    model_dir = os.path.join(result_dir, 'models')  # dir to save learnt models
     os.makedirs(model_dir, exist_ok=True)
 
     np.random.seed(args.seed)
@@ -55,7 +55,6 @@ def main(args):
 
         env = Engine(config)
         env.reset()
-
     else:
         env = OneHotAction(GymMinAtar(env_name))
     obs_shape = env.observation_space.shape
@@ -68,13 +67,21 @@ def main(args):
     if args.slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig
         else:
-            CFG = SlotMinAtarConfig
+            raise NotImplementedError
     elif args.slot_1slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig_1slot
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig_1slot
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig_1slot
         else:
-            CFG = SlotMinAtarConfig_1slot
+            raise NotImplementedError
     else:
         CFG = MinAtarConfig
     config = CFG(
