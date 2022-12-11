@@ -5,8 +5,8 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction, breakoutPOMDP, space_invadersPOMDP, seaquestPOMDP, asterixPOMDP, freewayPOMDP
 from dreamerv2.training.config import MinAtarConfig
-from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
-from dreamerv2.training.slot_config_1slot import SlotMinAtarConfig_1slot, SlotSafetyConfig_1slot
+from dreamerv2.training.slot_config import SlotFreewayConfig, SlotAsterixConfig, SlotSafetyConfig
+from dreamerv2.training.slot_config_1slot import SlotFreewayConfig_1slot, SlotAsterixConfig_1slot, SlotSafetyConfig_1slot
 from dreamerv2.training.evaluator import Evaluator
 from dreamerv2.training.slot_evaluator import SlotEvaluator
 
@@ -53,13 +53,21 @@ def main(args):
     if args.slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig
         else:
-            CFG = SlotMinAtarConfig
-    if args.slot_1slot:
+            raise NotImplementedError
+    elif args.slot_1slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig_1slot
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig_1slot
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig_1slot
         else:
-            CFG = SlotMinAtarConfig_1slot
+            raise NotImplementedError
     else:
         CFG = MinAtarConfig
     config = CFG(
@@ -73,7 +81,7 @@ def main(args):
         eval_render=eval_render
     )
 
-    if args.slot:
+    if args.slot or args.slot_1slot:
         EVL = SlotEvaluator
     else:
         EVL = Evaluator
