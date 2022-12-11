@@ -141,7 +141,7 @@ def main(args):
             if iter%trainer.config.slow_target_update == 0:
                 trainer.update_target()       
                 
-            if args.exp_suffix == 'debug':
+            if 'debug' in args.exp_suffix:
                 trainer.config.save_every = 100
                 
             if iter%trainer.config.save_every == 0:
@@ -214,6 +214,10 @@ if __name__ == "__main__":
     parser.add_argument('--slot', action='store_true')
     parser.add_argument('--slot_1slot', action='store_true')
     args = parser.parse_args()
+    
     if args.slot_1slot:
         assert not args.slot, 'can only specify 1 args'
+    if args.id is None:
+        args.id = args.seed
+        
     main(args)
