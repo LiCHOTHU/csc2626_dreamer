@@ -9,7 +9,7 @@ from collections import OrderedDict
 import mujoco_py
 from mujoco_py import MjViewer, MujocoException, const, MjRenderContextOffscreen
 
-from safety_gym.envs.world import World, Robot
+from dreamerv2.envs.navigation.world import World, Robot
 
 import sys
 

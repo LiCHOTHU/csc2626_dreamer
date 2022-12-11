@@ -6,10 +6,13 @@ import numpy as np
 import gym
 from dreamerv2.utils.wrapper import GymMinAtar, OneHotAction
 from dreamerv2.training.config import MinAtarConfig
-from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
-from dreamerv2.training.slot_config_1slot import SlotMinAtarConfig_1slot, SlotSafetyConfig_1slot
+from dreamerv2.training.slot_config import SlotFreewayConfig, SlotAsterixConfig, SlotSafetyConfig
+from dreamerv2.training.slot_config_1slot import SlotFreewayConfig_1slot, SlotAsterixConfig_1slot, SlotSafetyConfig_1slot
 from dreamerv2.training.trainer import Trainer
+from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
+from dreamerv2.training.slot_evaluator import SlotEvaluator
+from dreamerv2.envs.navigation.engine import Engine
 
 def main(args):
     wandb.login()
@@ -70,13 +73,21 @@ def main(args):
         from dreamerv2.training.slot_config import SlotMinAtarConfig, SlotSafetyConfig
         if env_name == "safety":
             CFG = SlotSafetyConfig
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig
         else:
-            CFG = SlotMinAtarConfig
+            raise NotImplementedError
     elif args.slot_1slot:
         if env_name == "safety":
             CFG = SlotSafetyConfig_1slot
+        elif 'freeway' in env_name.lower():
+            CFG = SlotFreewayConfig_1slot
+        elif 'asterix' in env_name.lower():
+            CFG = SlotAsterixConfig_1slot
         else:
-            CFG = SlotMinAtarConfig_1slot
+            raise NotImplementedError
     else:
         CFG = MinAtarConfig
     config = CFG(
@@ -92,19 +103,17 @@ def main(args):
     )
 
     config_dict = config.__dict__
-
     if args.slot or args.slot_1slot:
-        from dreamerv2.training.slot_trainer import SlotTrainer
         TRN = SlotTrainer
     else:
         TRN = Trainer
+
+    trainer = TRN(config, device)
     if args.slot or args.slot_1slot:
-        from dreamerv2.training.slot_evaluator import SlotEvaluator
         EVL = SlotEvaluator
     else:
         EVL = Evaluator
-        
-    trainer = TRN(config, device)
+
     evaluator = EVL(config, device)
 
     with wandb.init(

@@ -1,1 +1,1 @@
-import safety_gym.envs.suite
+import dreamerv2.envs.navigation.suite

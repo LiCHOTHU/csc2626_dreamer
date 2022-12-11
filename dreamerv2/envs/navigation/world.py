@@ -7,7 +7,7 @@ from copy import deepcopy
 from collections import OrderedDict
 from mujoco_py import const, load_model_from_path, load_model_from_xml, MjSim, MjViewer, MjRenderContextOffscreen
 
-import safety_gym
+import dreamerv2.envs.navigation as safety_gym
 import sys
 
 '''
