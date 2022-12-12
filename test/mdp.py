@@ -12,16 +12,18 @@ from dreamerv2.training.trainer import Trainer
 from dreamerv2.training.slot_trainer import SlotTrainer
 from dreamerv2.training.evaluator import Evaluator
 from dreamerv2.training.slot_evaluator import SlotEvaluator
-from dreamerv2.envs.navigation.engine import Engine
 
 def main(args):
     wandb.login()
     env_name = args.env
-    exp_id = args.id
 
     '''make dir for saving results'''
-    result_dir = os.path.join('results', '{}_{}'.format(env_name, exp_id))
-    model_dir = os.path.join(result_dir, 'models')  # dir to save learnt models
+    exp_name = env_name
+    if args.exp_suffix is not None:
+        exp_name += "_{}".format(args.exp_suffix)
+    
+    result_dir = os.path.join(args.result_root, exp_name)
+    model_dir = os.path.join(result_dir, 'r{}_models'.format(args.id))  #dir to save learnt models
     os.makedirs(model_dir, exist_ok=True)
 
     np.random.seed(args.seed)
@@ -34,6 +36,7 @@ def main(args):
     print('using :', device)
 
     if env_name == "safety":
+        from dreamerv2.envs.navigation.engine import Engine
         config = {
             'robot_base': 'xmls/point2.xml',
             # 'robot_base': 'xmls/point.xml',
@@ -57,6 +60,7 @@ def main(args):
         env.reset()
     else:
         env = OneHotAction(GymMinAtar(env_name))
+        
     obs_shape = env.observation_space.shape
     action_size = env.action_space.shape[0]
     obs_dtype = bool
@@ -93,6 +97,7 @@ def main(args):
         seq_len = seq_len,
         batch_size = batch_size,
         model_dir=model_dir, 
+        eval_render=False
     )
 
     config_dict = config.__dict__
@@ -109,7 +114,12 @@ def main(args):
 
     evaluator = EVL(config, device)
 
-    with wandb.init(project='mastering MinAtar with world models', config=config_dict):
+    with wandb.init(
+            project = 'mastering MinAtar with world models', 
+            config = config_dict, 
+            name = exp_name, 
+            dir = result_dir+"/wandb"
+        ):
         """training loop"""
         print('...training...')
         train_metrics = {}
@@ -127,9 +137,19 @@ def main(args):
             if iter%trainer.config.train_every == 0:
                 train_metrics = trainer.train_batch(train_metrics)
             if iter%trainer.config.slow_target_update == 0:
-                trainer.update_target()                
+                trainer.update_target()       
+                
+            if 'debug' in args.exp_suffix:
+                trainer.config.save_every = 100
+                
             if iter%trainer.config.save_every == 0:
+                save_path = os.path.join(model_dir, 'models_%d.pth' % iter)
                 trainer.save_model(iter)
+
+                # Evaluate the saved model and log the results
+                eval_score = evaluator.eval_saved_agent(env, save_path)
+                wandb.log({'eval_score': eval_score})
+
             with torch.no_grad():
                 embed = trainer.ObsEncoder(torch.tensor(obs, dtype=torch.float32)[None, None].to(trainer.device))
                 embed = embed.squeeze(0) 
@@ -177,14 +197,25 @@ if __name__ == "__main__":
     """there are tonnes of HPs, if you want to do an ablation over any particular one, please add if here"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str, help='mini atari env name')
-    parser.add_argument("--id", type=str, default='0', help='Experiment ID')
-    parser.add_argument('--seed', type=int, default=123, help='Random seed')
+
+    # For naming the experiment
+    parser.add_argument("--exp_suffix", type=str, default=None, help='experiment name, appended to env name')
+    parser.add_argument('--seed', type=int, default=1, help='Random seed')
+    parser.add_argument("--id", type=str, default=None, help='Experiment ID')
+
+    # For saving chcckpoints
+    parser.add_argument('--result_root', type=str, default='models', help='Directory to save models')
+    
     parser.add_argument('--device', default='cuda', help='CUDA or CPU')
     parser.add_argument('--batch_size', type=int, default=50, help='Batch size')
     parser.add_argument('--seq_len', type=int, default=50, help='Sequence Length (chunk length)')
     parser.add_argument('--slot', action='store_true')
     parser.add_argument('--slot_1slot', action='store_true')
     args = parser.parse_args()
+    
     if args.slot_1slot:
         assert not args.slot, 'can only specify 1 args'
+    if args.id is None:
+        args.id = args.seed
+        
     main(args)

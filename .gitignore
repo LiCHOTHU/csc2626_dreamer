@@ -134,5 +134,7 @@ dmypy.json
 .__pycache__
 .dreamerv2.egg-info
 .vscode
-# test
-# dreamerv2/models/savi/weights/safetygym-1slot.pth
+test/results
+test/wandb
+test/models
+models
